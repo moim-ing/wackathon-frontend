@@ -19,7 +19,7 @@ export const classesDB: GetClassResponse[] = [
     currentSession: {
       sessionId: '2',
       sessionTitle: '2주차',
-      videoId: 'hHHQ4bNhwjU',
+      videoId: 'U31mUH2DnWk',
       status: 'ACTIVE',
       createdAt: '2026-02-03T20:00:00Z',
       totalParticipants: 8,
