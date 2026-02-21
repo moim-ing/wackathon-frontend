@@ -83,6 +83,7 @@ export function useMusicPlayer(classId: string, session: SessionInfo | null) {
   }, []); // Truly empty dependency array to maintain one Audio object
 
   // Sync prop status to actual audio playback
+  // biome-ignore lint/correctness/useExhaustiveDependencies: session is not a dependency
   useEffect(() => {
     if (!audioRef.current || !isReady || !session) return;
 
