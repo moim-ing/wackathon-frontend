@@ -1,13 +1,5 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
-  "ignoreDependencies": [
-    "class-variance-authority",
-    "clsx",
-    "lucide-react",
-    "radix-ui",
-    "shadcn",
-    "tailwind-merge",
-    "tw-animate-css"
-  ],
+  "ignoreDependencies": ["shadcn", "tw-animate-css"],
   "ignore": ["src/components/ui/**", "src/lib/utils.ts", "src/mocks/utils.ts"]
 }
