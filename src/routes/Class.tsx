@@ -26,6 +26,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { useClass } from '@/hooks/useClasses';
+import { useUploadFile } from '@/hooks/useFile';
 import { useMusicPlayer } from '@/hooks/useMusicPlayer';
 import { useCreateSession } from '@/hooks/useSessions';
 import { useYouTubeVideo } from '@/hooks/useYouTube';
@@ -41,6 +42,7 @@ export default function Class() {
 
   const { data: classData, isLoading, updateStatus } = useClass(classId || '');
   const { mutateAsync: createSession } = useCreateSession();
+  const { mutateAsync: uploadFile } = useUploadFile();
   const [showCloseDialog, setShowCloseDialog] = useState(false);
   const [isPlayerOpen, setIsPlayerOpen] = useState(false);
 
@@ -225,10 +227,21 @@ export default function Class() {
                       // Not a full URL, fallback to videoId naturally
                     }
 
-                    if (classId && sessionTitle && videoId) {
+                    const audioFile = formData.get('audio-file') as File;
+
+                    if (classId && sessionTitle && videoId && audioFile) {
+                      const uploadResponse = await uploadFile({
+                        file: audioFile,
+                        prefix: 'audio',
+                      });
+
                       await createSession({
                         classId,
-                        data: { sessionTitle, videoId },
+                        data: {
+                          sessionTitle,
+                          videoId,
+                          videoKey: uploadResponse.key,
+                        },
                       });
                     }
                   }}
@@ -257,6 +270,16 @@ export default function Class() {
                         id="video-url"
                         name="video-url"
                         placeholder="https://youtube.com/watch?v=..."
+                        required
+                      />
+                    </Field>
+                    <Field>
+                      <Label htmlFor="audio-file">세션 음성 파일</Label>
+                      <Input
+                        id="audio-file"
+                        name="audio-file"
+                        type="file"
+                        accept="audio/*"
                         required
                       />
                     </Field>

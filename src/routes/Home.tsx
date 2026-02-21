@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { useUploadFile } from '@/hooks/useFile';
 import { useVerifyParticipation } from '@/hooks/useParticipation';
 import type { VerifyParticipationResponse } from '@/types/participation';
 import { AlertCircle, Loader2, Mic } from 'lucide-react';
@@ -7,6 +8,7 @@ import { useNavigate } from 'react-router';
 
 export default function Home() {
   const verifyMutation = useVerifyParticipation();
+  const uploadFileMutation = useUploadFile();
   const [isRecording, setIsRecording] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -41,9 +43,16 @@ export default function Home() {
         setIsVerifying(true);
 
         try {
+          // 1. Upload audio file to get the key
+          const uploadResponse = await uploadFileMutation.mutateAsync({
+            file: audioBlob,
+            prefix: 'audio',
+          });
+
+          // 2. Verify participation with the received key
           const response: VerifyParticipationResponse =
             await verifyMutation.mutateAsync({
-              audioFile: audioBlob,
+              key: uploadResponse.key,
               recordedAt,
             });
           // Navigate to success page with the verified data

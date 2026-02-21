@@ -5,6 +5,7 @@ import type { SessionInfo } from '@/types/classes';
 export interface CreateSessionRequest {
   sessionTitle: string;
   videoId: string;
+  videoKey: string;
 }
 
 export interface CreateSessionResponse {
