@@ -95,7 +95,7 @@ export function useMusicPlayer(classId: string, session: SessionInfo | null) {
   useEffect(() => {
     if (!audioRef.current || !isReady || !session) return;
 
-    let isCancelled = false;
+    // let isCancelled = false;
 
     if (session.status === 'ACTIVE') {
       audioRef.current
@@ -109,7 +109,7 @@ export function useMusicPlayer(classId: string, session: SessionInfo | null) {
     }
 
     return () => {
-      isCancelled = true;
+      // isCancelled = true;
     };
   }, [session?.status, isReady]);
 
