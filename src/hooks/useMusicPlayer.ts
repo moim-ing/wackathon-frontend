@@ -58,6 +58,7 @@ export function useMusicPlayer(classId: string, session: SessionInfo | null) {
     // 새로운 오디오 URL이 들어오면 준비 상태 초기화
     setIsReady(false);
     const audio = new Audio(audioUrl);
+    audio.crossOrigin = 'anonymous'; // Added for cross-origin audio playback
     audioRef.current = audio;
 
     const onLoadedMetadata = () => {
@@ -93,7 +94,7 @@ export function useMusicPlayer(classId: string, session: SessionInfo | null) {
   // Sync prop status to actual audio playback
   // biome-ignore lint/correctness/useExhaustiveDependencies: session is not a dependency
   useEffect(() => {
-    if (!audioRef.current || !isReady || !session) return;
+    if (!audioRef.current || !session) return;
 
     // let isCancelled = false;
 

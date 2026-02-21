@@ -13,7 +13,6 @@ import {
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -45,6 +44,7 @@ export default function Class() {
   const { mutateAsync: uploadFile } = useUploadFile();
   const [showCloseDialog, setShowCloseDialog] = useState(false);
   const [isPlayerOpen, setIsPlayerOpen] = useState(false);
+  const [isStartSessionOpen, setIsStartSessionOpen] = useState(false);
 
   const title = classData?.class.title || '';
   const sessions = classData?.sessions || [];
@@ -195,7 +195,10 @@ export default function Class() {
             transition={{ type: 'spring', stiffness: 400, damping: 30 }}
             className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50"
           >
-            <Dialog>
+            <Dialog
+              open={isStartSessionOpen}
+              onOpenChange={setIsStartSessionOpen}
+            >
               <DialogTrigger asChild>
                 <Button
                   size="icon"
@@ -243,6 +246,8 @@ export default function Class() {
                           videoKey: uploadResponse.key,
                         },
                       });
+
+                      setIsStartSessionOpen(false);
                     }
                   }}
                 >
@@ -285,17 +290,18 @@ export default function Class() {
                     </Field>
                   </FieldGroup>
                   <DialogFooter>
-                    <div className="flex gap-3 items-center justify-center">
-                      <DialogClose asChild>
-                        <Button variant="outline" className="w-[48%]">
-                          취소
-                        </Button>
-                      </DialogClose>
-                      <DialogClose asChild>
-                        <Button type="submit" className="w-[48%]">
-                          시작
-                        </Button>
-                      </DialogClose>
+                    <div className="flex gap-3 items-center justify-center w-full">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-[48%]"
+                        onClick={() => setIsStartSessionOpen(false)}
+                      >
+                        취소
+                      </Button>
+                      <Button type="submit" className="w-[48%]">
+                        시작
+                      </Button>
                     </div>
                   </DialogFooter>
                 </form>
