@@ -93,7 +93,7 @@ export default function GuestSuccess() {
 
   if (submitSuccess) {
     return (
-      <div className="flex flex-col gap-6 h-full w-full items-center justify-center animate-in fade-in zoom-in duration-300 md:mt-24 mt-12 text-center">
+      <div className="flex flex-col gap-6 w-full items-center justify-center animate-in fade-in zoom-in duration-300 md:mt-24 mt-12 text-center">
         <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mb-2">
           <CheckCircle2 className="w-12 h-12 text-green-600" />
         </div>
@@ -115,7 +115,7 @@ export default function GuestSuccess() {
   const thumbnailUrl = getYouTubeThumbnailUrl(verificationData.videoId);
 
   return (
-    <div className="flex flex-col gap-6 h-full w-full items-center md:mt-12 mt-6">
+    <div className="flex flex-col gap-6 w-full items-center md:mt-12 mt-6">
       <Card className="w-full max-w-sm shadow-lg border-primary/20 animate-in slide-in-from-bottom-4 duration-500">
         <CardHeader className="text-center pb-2">
           <div className="flex justify-center mb-4">

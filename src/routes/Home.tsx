@@ -10,8 +10,10 @@ export default function Home() {
   const [isRecording, setIsRecording] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [timeLeft, setTimeLeft] = useState(5);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<BlobPart[]>([]);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
   const navigate = useNavigate();
 
   const handleStartRecording = async () => {
@@ -29,6 +31,7 @@ export default function Home() {
       };
 
       mediaRecorder.onstop = async () => {
+        if (timerRef.current) clearInterval(timerRef.current);
         const audioBlob = new Blob(audioChunksRef.current, {
           type: 'audio/webm',
         });
@@ -57,6 +60,18 @@ export default function Home() {
 
       mediaRecorder.start();
       setIsRecording(true);
+      setTimeLeft(5);
+
+      if (timerRef.current) clearInterval(timerRef.current);
+      timerRef.current = setInterval(() => {
+        setTimeLeft((prev) => {
+          if (prev <= 1) {
+            if (timerRef.current) clearInterval(timerRef.current);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
 
       // Stop recording after 5 seconds
       setTimeout(() => {
@@ -74,7 +89,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col gap-12 h-full w-full items-center md:mt-24 mt-12">
+    <div className="flex flex-col gap-12 w-full items-center md:mt-24 mt-12">
       <div className="flex flex-col gap-2 w-full max-w-sm text-center">
         <h1 className="text-3xl font-bold tracking-tight">현장 출석 체크</h1>
 
@@ -117,7 +132,7 @@ export default function Home() {
       <div className="h-16 flex flex-col justify-center items-center w-full max-w-sm">
         {isRecording && (
           <p className="text-lg font-medium text-red-500 animate-pulse">
-            녹음 중입니다... (5초)
+            녹음 중입니다... ({timeLeft}초)
           </p>
         )}
 
@@ -136,12 +151,7 @@ export default function Home() {
       </div>
 
       {errorMsg && !isRecording && !isVerifying && (
-        <Button
-          variant="outline"
-          size="lg"
-          onClick={handleStartRecording}
-          className="mt-4"
-        >
+        <Button size="lg" onClick={handleStartRecording} className="mt-4">
           다시 시도하기
         </Button>
       )}
