@@ -90,16 +90,31 @@ export function useMusicPlayer(classId: string, session: SessionInfo | null) {
   useEffect(() => {
     if (!audioRef.current || !isReady || !session) return;
 
+    let isCancelled = false;
+
     if (session.status === 'ACTIVE') {
-      audioRef.current
-        .play()
-        .then(() => {
-          // 필요 시 추가 로직
-        })
-        .catch((err) => console.error('Audio play failed:', err));
+      const playPromise = audioRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((err) => {
+          if (isCancelled) return;
+          console.error(
+            'Audio play failed (possibly autoplay restricted):',
+            err
+          );
+          // If auto-play is prevented, revert the status to PAUSED
+          // so the user can manually click the Play button.
+          if (err.name === 'NotAllowedError') {
+            handleUpdateStatusRef.current('PAUSED');
+          }
+        });
+      }
     } else {
       audioRef.current.pause();
     }
+
+    return () => {
+      isCancelled = true;
+    };
   }, [session?.status, isReady]);
 
   const seek = (time: number) => {

@@ -18,7 +18,7 @@ export const sessionsHandlers = [
     { id: string },
     CreateSessionRequest,
     CreateSessionResponse | ApiErrorResponse
-  >(path('/classes/:id/sessions'), async ({ request }) => {
+  >(path('/classes/:id/sessions'), async ({ request, params }) => {
     const authHeader = request.headers.get('Authorization');
     if (!authHeader) {
       return HttpResponse.json(
@@ -31,15 +31,26 @@ export const sessionsHandlers = [
       );
     }
 
-    // 비디오 ID를 요청 바디에서 체크하는 경우 여기에 사용할 수 있습니다.
-    await request.json();
+    const { videoId, sessionTitle } = await request.json();
 
     const newSessionId = String(Date.now());
-    const newSessionTitle = `${newSessionId}주차`;
+    const newSessionTitle = sessionTitle || `${newSessionId}주차`;
+
+    const { classesDB } = await import('../db/classes.db');
+    const classData = classesDB.find((c) => c.class.id === params.id);
+
+    if (classData) {
+      classData.currentSession = {
+        sessionId: newSessionId,
+        sessionTitle: newSessionTitle,
+        videoId: videoId,
+        status: 'ACTIVE',
+      };
+    }
 
     return HttpResponse.json({
       sessionId: newSessionId,
-      sessionTitle: newSessionTitle,
+      // CreateSessionResponse types only has sessionId
     } as CreateSessionResponse);
   }),
 
