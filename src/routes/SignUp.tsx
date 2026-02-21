@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import useAuth from '@/hooks/useAuth';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 
@@ -33,11 +34,16 @@ export default function SignUp() {
     isConfirmPasswordMatch &&
     formData.confirmPassword.length > 0;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const { handleSignUp } = useAuth();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isFormValid) {
       console.info('Sign up submitted:', formData);
-      // 가입 로직 처리
+      const success = await handleSignUp(formData);
+      if (success) {
+        navigate('/host');
+      }
     }
   };
 

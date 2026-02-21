@@ -4,57 +4,41 @@ import { formatDate } from '@/utils/date';
 import { ArrowLeft, Calendar, Music, Users } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router';
 
-interface SessionData {
-  title: string;
-  date: string;
-  song: {
-    title: string;
-    artist: string;
-    videoId: string;
-  };
-  participants: string[];
-}
-
-const sampleSessions: Record<string, SessionData> = {
-  '1': {
-    title: '1주차',
-    date: '2026-02-02T20:00:00Z',
-    song: {
-      title: '불',
-      artist: '유다빈밴드',
-      videoId: 'hHHQ4bNhwjU',
-    },
-    participants: [
-      '김민지',
-      '하니',
-      '모다니',
-      '해린',
-      '이혜인',
-      '홍길동',
-      '이순신',
-      '강감찬',
-    ],
-  },
-  '2': {
-    title: '2주차',
-    date: '2026-02-09T20:00:00Z',
-    song: {
-      title: 'Never Gonna Give You Up',
-      artist: 'Rick Astley',
-      videoId: '3BFTio5296w',
-    },
-    participants: ['김민지', '하니', '다니엘', '해린', '이혜인', '신짱구'],
-  },
-};
+import { useSession } from '@/hooks/useSessions';
+import { getYouTubeInfo } from '@/utils/youtube';
+import { useQuery } from '@tanstack/react-query';
 
 export default function Session() {
-  const { sessionId } = useParams<{ sessionId: string }>();
+  const { classId, sessionId } = useParams<{
+    classId: string;
+    sessionId: string;
+  }>();
   const navigate = useNavigate();
 
-  const session = sessionId ? sampleSessions[sessionId] : null;
+  const {
+    data: sessionData,
+    isLoading,
+    isError,
+  } = useSession(classId || '', sessionId || '');
+
+  const videoId = sessionData?.videoId;
+
+  const { data: youtubeInfo } = useQuery({
+    queryKey: ['youtube', videoId],
+    queryFn: () => getYouTubeInfo(videoId!),
+    enabled: !!videoId,
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        Loading...
+      </div>
+    );
+  }
 
   // Session not found
-  if (!session) {
+  if (isError || !sessionData) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6 px-4 text-center">
         <div className="size-20 bg-secondary rounded-full flex items-center justify-center">
@@ -73,6 +57,10 @@ export default function Session() {
     );
   }
 
+  const songTitle = youtubeInfo?.title || '로딩 중...';
+  const songArtist = youtubeInfo?.authorName || '';
+  const participants = sessionData.participants || [];
+
   return (
     <div className="flex flex-col w-full gap-8 pb-20 max-w-3xl mx-auto">
       {/* Header section */}
@@ -87,7 +75,7 @@ export default function Session() {
             <ArrowLeft className="size-5" />
           </Button>
           <div className="flex flex-col">
-            <h1 className="text-3xl font-bold">{session.title}</h1>
+            <h1 className="text-3xl font-bold">{sessionData.sessionTitle}</h1>
           </div>
         </div>
 
@@ -95,14 +83,14 @@ export default function Session() {
           <div className="flex items-center gap-2">
             <Calendar className="size-4 text-primary" />
             <span className="text-sm font-semibold">
-              {formatDate(session.date)}
+              {formatDate(sessionData.createdAt || '')}
             </span>
           </div>
           <div className="w-px h-3 bg-border" />
           <div className="flex items-center gap-2">
             <Users className="size-4 text-primary" />
             <span className="text-sm font-semibold">
-              {session.participants.length}명 출석
+              {participants.length}명 출석
             </span>
           </div>
         </div>
@@ -114,7 +102,7 @@ export default function Session() {
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8 bg-white/50 backdrop-blur-sm p-8 rounded-[2.5rem] border-1 border-primary/10 shadow-xl shadow-primary/5 relative z-10">
           <div className="relative">
             <img
-              src={`https://img.youtube.com/vi/${session.song.videoId}/maxresdefault.jpg`}
+              src={`https://img.youtube.com/vi/${sessionData.videoId}/maxresdefault.jpg`}
               alt="Album Art"
               className="w-40 h-40 sm:w-48 sm:h-48 rounded-[2rem] object-cover shadow-2xl shadow-black/20"
               style={{ viewTransitionName: `album-art-${sessionId}` }}
@@ -127,10 +115,10 @@ export default function Session() {
           <div className="flex flex-col justify-center gap-4 text-center sm:text-left pt-2">
             <div className="space-y-1">
               <h2 className="text-2xl sm:text-4xl font-bold tracking-tighter leading-none pt-2">
-                {session.song.title}
+                {songTitle}
               </h2>
               <h3 className="text-lg text-muted-foreground font-medium">
-                {session.song.artist}
+                {songArtist}
               </h3>
             </div>
           </div>
@@ -146,16 +134,16 @@ export default function Session() {
             <h1>출석부</h1>
             <span className="text-primary font-black text-lg">·</span>
             <span className="text-muted-foreground font-medium">
-              {session.participants.length}
+              {participants.length}
             </span>
           </div>
         </div>
 
         {/* TODO: 이 그리드 형태가 최선인가? 그리드 줄 수 늘리기? 그리드가 아니라 다른 스타일 찾기? */}
         <div className="grid px-2 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {session.participants.map((name: string, index: number) => (
+          {participants.map((participant, index) => (
             <div key={index} className="">
-              <span className="single-line-body-base">{name}</span>
+              <span className="single-line-body-base">{participant.name}</span>
             </div>
           ))}
         </div>

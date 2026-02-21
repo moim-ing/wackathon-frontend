@@ -3,9 +3,11 @@ import useAuthStore from '../hooks/useAuthStore';
 import { useErrorStore } from '../hooks/useErrorStore';
 import type { ApiErrorResponse } from '../types';
 
+const baseURL = import.meta.env.VITE_API_BASE_URL || '';
+
 // 공통 설정을 가진 axios 인스턴스 생성
 const apiClient = axios.create({
-  baseURL: `${import.meta.env.VITE_API_BASE_URL}/api`,
+  baseURL: `${baseURL}/api`,
   timeout: 5000,
   headers: { 'Content-Type': 'application/json' },
 });

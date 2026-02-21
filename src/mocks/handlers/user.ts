@@ -1,6 +1,7 @@
 import type { ApiErrorResponse } from '@/types/index';
 import type { GetMeResponse, GetMyClassesResponse } from '@/types/users';
 import { http, HttpResponse } from 'msw';
+import { classesDB } from '../db/classes.db';
 import { userDB } from '../db/user.db';
 import { path } from '../utils';
 
@@ -74,14 +75,8 @@ export const userHandlers = [
         );
       }
 
-      // TODO: 나중에 등록된 클래스 DB가 생기면 매핑해야 함
       return HttpResponse.json({
-        classes: [
-          {
-            id: '1',
-            title: '리액트의 원리와 실습',
-          },
-        ],
+        classes: classesDB.map((c) => c.class),
       });
     }
   ),
