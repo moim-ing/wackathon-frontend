@@ -50,8 +50,13 @@ export function useMusicPlayer(classId: string, session: SessionInfo | null) {
 
   // Initialize Audio
   useEffect(() => {
-    if (!audioUrl) return;
+    if (!audioUrl) {
+      setIsReady(false);
+      return;
+    }
 
+    // 새로운 오디오 URL이 들어오면 준비 상태 초기화
+    setIsReady(false);
     const audio = new Audio(audioUrl);
     audioRef.current = audio;
 
@@ -93,21 +98,12 @@ export function useMusicPlayer(classId: string, session: SessionInfo | null) {
     let isCancelled = false;
 
     if (session.status === 'ACTIVE') {
-      const playPromise = audioRef.current.play();
-      if (playPromise !== undefined) {
-        playPromise.catch((err) => {
-          if (isCancelled) return;
-          console.error(
-            'Audio play failed (possibly autoplay restricted):',
-            err
-          );
-          // If auto-play is prevented, revert the status to PAUSED
-          // so the user can manually click the Play button.
-          if (err.name === 'NotAllowedError') {
-            handleUpdateStatusRef.current('PAUSED');
-          }
-        });
-      }
+      audioRef.current
+        .play()
+        .then(() => {
+          console.info('Playback started successfully');
+        })
+        .catch((err) => console.error('Audio play failed:', err));
     } else {
       audioRef.current.pause();
     }
