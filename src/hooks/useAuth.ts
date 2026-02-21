@@ -58,7 +58,7 @@ export default function useAuth() {
       console.error(e);
     } finally {
       logout(); // Zustand 상태 초기화
-      navigate('/');
+      navigate('/host');
     }
   };
 
