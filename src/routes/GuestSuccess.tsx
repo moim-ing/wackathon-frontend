@@ -15,6 +15,15 @@ import { CheckCircle2, Loader2, Music } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 
+const DEFAULT_VERIFICATION_DATA: VerifyParticipationResponse = {
+  id: '1',
+  title: '알고리즘 (테스트)',
+  sessionId: '2',
+  sessionTitle: '1주차',
+  videoId: 'hHHQ4bNhwjU',
+  verifiedAt: new Date().toISOString(),
+};
+
 export default function GuestSuccess() {
   const attendMutation = useSessionAttendance();
   const location = useLocation();
@@ -22,15 +31,9 @@ export default function GuestSuccess() {
   // const verificationData = location.state
   //   ?.verificationData as VerifyParticipationResponse;
   // 개발 시 편리한 테스트를 위해 라우트로 직접 접근해도 기본 데이터를 제공합니다.
-  const verificationData = (location.state
-    ?.verificationData as VerifyParticipationResponse) || {
-    id: '1',
-    title: '알고리즘 (테스트)',
-    sessionId: '2',
-    sessionTitle: '1주차',
-    videoId: 'hHHQ4bNhwjU',
-    verifiedAt: new Date().toISOString(),
-  };
+  const verificationData =
+    (location.state?.verificationData as VerifyParticipationResponse) ||
+    DEFAULT_VERIFICATION_DATA;
 
   const [studentName, setStudentName] = useState('');
   const [songTitle, setSongTitle] = useState<string>('');
