@@ -3,6 +3,7 @@ import HostLayout from '@/layouts/HostLayout';
 import Class from '@/routes/Class';
 import Home from '@/routes/Home';
 import HostHome from '@/routes/HostHome';
+import SignUp from '@/routes/SignUp';
 
 import { createBrowserRouter } from 'react-router';
 
@@ -15,7 +16,10 @@ export const router = createBrowserRouter([
   {
     path: '/host',
     Component: HostLayout,
-    children: [{ index: true, Component: HostHome }],
+    children: [
+      { index: true, Component: HostHome },
+      { path: 'signup', Component: SignUp },
+    ],
   },
   {
     path: '/class/:classId',

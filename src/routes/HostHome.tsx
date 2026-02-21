@@ -64,6 +64,7 @@ export default function HostHome() {
           <Button
             className="body-strong text-foreground hover:text-primary"
             variant="link"
+            onClick={() => navigate('/host/signup')}
           >
             회원가입
           </Button>
