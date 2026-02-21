@@ -35,11 +35,14 @@ export interface SessionAttendanceResponse {
 
 // ---------- PATCH /api/classes/{id}/sessions/{sessionId}/status ----------
 
+export type SessionStatus = 'ACTIVE' | 'PAUSED' | 'CLOSED';
+
 export interface PatchSessionStatusRequest {
-  status: 'ACTIVE' | 'PAUSED' | 'CLOSED';
+  status: SessionStatus;
+  currentTime: number;
+  updatedAt: number;
 }
 
 export interface PatchSessionStatusResponse {
-  currentStatus: 'ACTIVE' | 'PAUSED' | 'CLOSED';
-  updatedAt: string;
+  currentStatus: SessionStatus;
 }

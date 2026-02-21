@@ -8,6 +8,14 @@ import type {
 export async function verifyParticipation(
   data: VerifyParticipationRequest
 ): Promise<VerifyParticipationResponse> {
-  const response = await apiClient.post('/participation/verify', data);
+  const formData = new FormData();
+  formData.append('audioFile', data.audioFile);
+  formData.append('recordedAt', String(data.recordedAt));
+
+  const response = await apiClient.post('/participation/verify', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
   return response.data;
 }

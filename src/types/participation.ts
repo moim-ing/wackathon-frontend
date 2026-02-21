@@ -1,7 +1,8 @@
 // ---------- POST /api/participation/verify ----------
 
 export interface VerifyParticipationRequest {
-  audioFile: string;
+  audioFile: Blob | File;
+  recordedAt: number;
 }
 
 export interface VerifyParticipationResponse {

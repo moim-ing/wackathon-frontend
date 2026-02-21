@@ -97,7 +97,6 @@ export const sessionsHandlers = [
 
     return HttpResponse.json({
       currentStatus: status,
-      updatedAt: new Date().toISOString(),
     });
   }),
 ];
