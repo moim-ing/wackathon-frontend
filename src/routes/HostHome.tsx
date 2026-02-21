@@ -115,26 +115,26 @@ export default function HostHome() {
         ))}
       </div>
       <Dialog>
-        <form
-          onSubmit={async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.currentTarget);
-            const title = formData.get('class-title') as string;
-            if (title) {
-              await createClass({ title });
-            }
-          }}
-        >
-          <DialogTrigger asChild>
-            <Button
-              size="icon"
-              className="fixed bottom-10 left-1/2 -translate-x-1/2 h-12 w-40 rounded-full shadow-xl cursor-pointer"
-            >
-              <Plus className="size-5" />
-              <span className="text-base font-semibold">수업 추가하기</span>
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-sm">
+        <DialogTrigger asChild>
+          <Button
+            size="icon"
+            className="fixed bottom-10 left-1/2 -translate-x-1/2 h-12 w-40 rounded-full shadow-xl cursor-pointer"
+          >
+            <Plus className="size-5" />
+            <span className="text-base font-semibold">수업 추가하기</span>
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-sm">
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              const title = formData.get('class-title') as string;
+              if (title) {
+                await createClass({ title });
+              }
+            }}
+          >
             <DialogHeader>
               <DialogTitle>수업 추가하기</DialogTitle>
               <DialogDescription>
@@ -165,8 +165,8 @@ export default function HostHome() {
                 </DialogClose>
               </div>
             </DialogFooter>
-          </DialogContent>
-        </form>
+          </form>
+        </DialogContent>
       </Dialog>
     </div>
   );

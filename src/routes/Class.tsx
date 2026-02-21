@@ -55,42 +55,42 @@ export default function Class() {
       </div>
 
       <Dialog>
-        <form
-          onSubmit={async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.currentTarget);
-            const sessionTitle = formData.get('session-title') as string;
-            const videoUrlOrId = formData.get('video-url') as string;
+        <DialogTrigger asChild>
+          <Button
+            size="icon"
+            className="fixed bottom-10 left-1/2 -translate-x-1/2 h-12 w-40 rounded-full shadow-xl cursor-pointer"
+          >
+            <Play className="size-5" />
+            <span className="text-base font-semibold">세션 시작하기</span>
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-sm">
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              const sessionTitle = formData.get('session-title') as string;
+              const videoUrlOrId = formData.get('video-url') as string;
 
-            let videoId = videoUrlOrId;
-            try {
-              const url = new URL(videoUrlOrId);
-              videoId =
-                url.searchParams.get('v') ||
-                url.pathname.split('/').pop() ||
-                videoId;
-            } catch {
-              // Not a full URL, fallback to videoId naturally
-            }
+              let videoId = videoUrlOrId;
+              try {
+                const url = new URL(videoUrlOrId);
+                videoId =
+                  url.searchParams.get('v') ||
+                  url.pathname.split('/').pop() ||
+                  videoId;
+              } catch {
+                // Not a full URL, fallback to videoId naturally
+              }
 
-            if (classId && sessionTitle && videoId) {
-              await createSession({
-                classId,
-                data: { sessionTitle, videoId },
-              });
-            }
-          }}
-        >
-          <DialogTrigger asChild>
-            <Button
-              size="icon"
-              className="fixed bottom-10 left-1/2 -translate-x-1/2 h-12 w-40 rounded-full shadow-xl cursor-pointer"
-            >
-              <Play className="size-5" />
-              <span className="text-base font-semibold">세션 시작하기</span>
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-sm">
+              if (classId && sessionTitle && videoId) {
+                await createSession({
+                  classId,
+                  data: { sessionTitle, videoId },
+                });
+              }
+            }}
+          >
             <DialogHeader>
               <DialogTitle>세션 시작하기</DialogTitle>
               <DialogDescription>
@@ -133,8 +133,8 @@ export default function Class() {
                 </DialogClose>
               </div>
             </DialogFooter>
-          </DialogContent>
-        </form>
+          </form>
+        </DialogContent>
       </Dialog>
     </div>
   );
