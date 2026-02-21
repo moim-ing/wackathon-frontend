@@ -1,122 +1,46 @@
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
-import { usePatchSessionStatus } from '@/hooks/useSessions';
 import { useYouTubeVideo } from '@/hooks/useYouTube';
 import { motion } from 'framer-motion';
 import { ChevronDown, Pause, Play, Square, Users } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import type { SessionInfo } from '@/types/classes';
 
 interface MusicPlayerViewProps {
-  classId: string;
   session: SessionInfo;
   onClose: () => void;
+  currentTime: number;
+  duration: number;
+  seek: (time: number) => void;
+  handleUpdateStatus: (status: 'ACTIVE' | 'PAUSED' | 'CLOSED') => void;
 }
 
 export default function MusicPlayerView({
-  classId,
   session,
   onClose,
+  currentTime,
+  duration,
+  seek,
+  handleUpdateStatus,
 }: MusicPlayerViewProps) {
   const { data: videoInfo } = useYouTubeVideo(session.videoId);
-  const { mutate: patchStatus } = usePatchSessionStatus();
+  const [displayTime, setDisplayTime] = useState(currentTime);
 
-  // Audio state
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [isReady, setIsReady] = useState(false);
-
-  // 최신 상태를 이벤트 핸들러에서 참조하기 위한 Ref
-  const statusRef = useRef(session.status);
-
+  // 별도의 이펙트로 currentTime이 소수점 단위로 바뀔 때 displayTime을 동기화
   useEffect(() => {
-    statusRef.current = session.status;
-  }, [session.status]);
-
-  // URL of the MP3 file
-  const sampleURL =
-    'https://github.com/young-52/audio-test/raw/refs/heads/main/no-pain.mp3';
-
-  // Initialize Audio
-  useEffect(() => {
-    const audio = new Audio(sampleURL);
-    audioRef.current = audio;
-
-    const onLoadedMetadata = () => {
-      setDuration(audio.duration);
-      setIsReady(true);
-    };
-
-    const onTimeUpdate = () => {
-      setCurrentTime(audio.currentTime);
-    };
-
-    const onEnded = () => {
-      // 음원 재생 완료 시 다시 처음부터 재생하고 상태 전송
-      audio.currentTime = 0;
-      audio.play().catch((err) => console.error('Audio replay failed:', err));
-      // Ref를 사용하여 최신 상태를 참조
-      handleUpdateStatus(statusRef.current === 'ACTIVE' ? 'ACTIVE' : 'PAUSED');
-    };
-
-    audio.addEventListener('loadedmetadata', onLoadedMetadata);
-    audio.addEventListener('timeupdate', onTimeUpdate);
-    audio.addEventListener('ended', onEnded);
-
-    return () => {
-      audio.pause();
-      audio.removeEventListener('loadedmetadata', onLoadedMetadata);
-      audio.removeEventListener('timeupdate', onTimeUpdate);
-      audio.removeEventListener('ended', onEnded);
-      audioRef.current = null;
-    };
-  }, []);
-
-  // Sync prop status to actual audio playback
-  useEffect(() => {
-    if (!audioRef.current || !isReady) return;
-
-    if (session.status === 'ACTIVE') {
-      audioRef.current
-        .play()
-        .then(() => {
-          // 음원 로드가 완료된 후 재생이 시작될 때 상태 전송
-          handleUpdateStatus('ACTIVE');
-        })
-        .catch((err) => console.error('Audio play failed:', err));
-    } else {
-      audioRef.current.pause();
-    }
-  }, [session.status, isReady]);
-
-  // Handle status update
-  const handleUpdateStatus = (status: 'ACTIVE' | 'PAUSED' | 'CLOSED') => {
-    patchStatus({
-      classId,
-      sessionId: session.sessionId,
-      data: {
-        status,
-        currentTime: audioRef.current?.currentTime || 0,
-        updatedAt: Date.now(),
-      },
-    });
-  };
+    setDisplayTime(currentTime);
+  }, [currentTime]);
 
   // Handle Slider Change (Dragging)
   const handleSliderChange = (value: number[]) => {
-    if (audioRef.current) {
-      setCurrentTime(value[0]);
-    }
+    setDisplayTime(value[0]);
   };
 
   // Handle Slider Commit (Released)
   const handleSliderCommit = (value: number[]) => {
-    if (audioRef.current) {
-      audioRef.current.currentTime = value[0];
-      handleUpdateStatus(session.status === 'ACTIVE' ? 'ACTIVE' : 'PAUSED');
-    }
+    seek(value[0]);
+    handleUpdateStatus(session.status === 'ACTIVE' ? 'ACTIVE' : 'PAUSED');
   };
 
   // Time Formatter (seconds -> mm:ss)
@@ -200,7 +124,7 @@ export default function MusicPlayerView({
       {/* Slider */}
       <div className="relative z-10 w-full mb-10 space-y-3">
         <Slider
-          value={[currentTime]}
+          value={[displayTime]}
           onValueChange={handleSliderChange}
           onValueCommit={handleSliderCommit}
           max={duration || 100}
@@ -208,8 +132,8 @@ export default function MusicPlayerView({
           className="py-2 cursor-pointer"
         />
         <div className="flex justify-between text-[11px] font-black text-muted-foreground/50 tracking-widest uppercase">
-          <span>{formatTime(currentTime)}</span>
-          <span>-{formatTime(duration - currentTime)}</span>
+          <span>{formatTime(displayTime)}</span>
+          <span>-{formatTime(duration - displayTime)}</span>
         </div>
       </div>
 

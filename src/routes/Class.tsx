@@ -26,6 +26,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { useClass } from '@/hooks/useClasses';
+import { useMusicPlayer } from '@/hooks/useMusicPlayer';
 import { useCreateSession } from '@/hooks/useSessions';
 import { useYouTubeVideo } from '@/hooks/useYouTube';
 import { formatDate } from '@/utils/date';
@@ -46,6 +47,13 @@ export default function Class() {
   const title = classData?.class.title || '';
   const sessions = classData?.sessions || [];
   const currentSession = classData?.currentSession ?? null;
+
+  const {
+    currentTime,
+    duration,
+    seek,
+    handleUpdateStatus: playerHandleUpdateStatus,
+  } = useMusicPlayer(classId || '', currentSession);
 
   const handleUpdateStatus = (status: 'ACTIVE' | 'PAUSED' | 'CLOSED') => {
     console.info('handleUpdateStatus: ', status);
@@ -277,8 +285,11 @@ export default function Class() {
       <AnimatePresence>
         {isPlayerOpen && currentSession && (
           <MusicPlayerView
-            classId={classId || ''}
             session={currentSession}
+            currentTime={currentTime}
+            duration={duration}
+            seek={seek}
+            handleUpdateStatus={playerHandleUpdateStatus}
             onClose={() => setIsPlayerOpen(false)}
           />
         )}
