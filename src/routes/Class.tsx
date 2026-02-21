@@ -15,7 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Play } from 'lucide-react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 
 const sampleHistory = [
   {
@@ -34,12 +34,23 @@ const sampleHistory = [
   },
 ];
 
-export default function Dashboard() {
+function getSampleTitle(classId: string | undefined) {
+  if (classId == '1') return '리액트의 원리와 실습';
+  if (classId == '2') return '고급 CSS';
+
+  console.error('Invalid classId: ' + classId);
+  return '?';
+}
+
+export default function Class() {
+  const { classId } = useParams<{ classId: string }>();
   const navigate = useNavigate();
+
+  const sampleTitle = getSampleTitle(classId);
 
   return (
     <div className="flex w-full flex-col gap-8 ">
-      <h1 className="text-3xl font-bold">리액트의 원리와 실습</h1>
+      <h1 className="text-3xl font-bold">{sampleTitle}</h1>
       <div className="flex flex-col w-full gap-1">
         {sampleHistory.map((session) => (
           <>
@@ -49,7 +60,7 @@ export default function Dashboard() {
               videoId={session.videoId}
               date={session.createdAt}
               participants={session.totalParticipants}
-              onClick={() => navigate(`/host/class/${session.sessionId}`)}
+              onClick={() => navigate(`/class/${classId}/${session.sessionId}`)}
             />
             {sampleHistory.indexOf(session) < sampleHistory.length - 1 && (
               <Separator />

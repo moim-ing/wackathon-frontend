@@ -15,9 +15,11 @@ export const router = createBrowserRouter([
   {
     path: '/host',
     Component: HostLayout,
-    children: [
-      { index: true, Component: HostHome },
-      { path: 'class', Component: Class },
-    ],
+    children: [{ index: true, Component: HostHome }],
+  },
+  {
+    path: '/class/:classId',
+    Component: HostLayout,
+    children: [{ index: true, Component: Class }],
   },
 ]);
