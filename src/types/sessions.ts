@@ -13,7 +13,7 @@ export interface CreateSessionResponse {
 }
 
 // ---------- GET /api/classes/{id}/sessions/{sessionId} ----------
-export interface SessionParticipant {
+interface SessionParticipant {
   id: string;
   name: string;
   participatedAt: string;
@@ -36,7 +36,7 @@ export interface SessionAttendanceResponse {
 
 // ---------- PATCH /api/classes/{id}/sessions/{sessionId}/status ----------
 
-export type SessionStatus = 'ACTIVE' | 'PAUSED' | 'CLOSED';
+type SessionStatus = 'ACTIVE' | 'PAUSED' | 'CLOSED';
 
 export interface PatchSessionStatusRequest {
   status: SessionStatus;
