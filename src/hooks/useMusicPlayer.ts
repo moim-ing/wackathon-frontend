@@ -1,3 +1,4 @@
+import { useGetFile } from '@/hooks/useFile';
 import { usePatchSessionStatus } from '@/hooks/useSessions';
 import type { SessionInfo } from '@/types/classes';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -44,12 +45,14 @@ export function useMusicPlayer(classId: string, session: SessionInfo | null) {
     handleUpdateStatusRef.current = handleUpdateStatus;
   }, [handleUpdateStatus]);
 
-  const sampleURL =
-    'https://github.com/young-52/audio-test/raw/refs/heads/main/no-pain.mp3';
+  const { data: fileData } = useGetFile(session?.sessionId || '');
+  const audioUrl = fileData?.url;
 
-  // Initialize Audio - Stable effect, runs only once
+  // Initialize Audio
   useEffect(() => {
-    const audio = new Audio(sampleURL);
+    if (!audioUrl) return;
+
+    const audio = new Audio(audioUrl);
     audioRef.current = audio;
 
     const onLoadedMetadata = () => {
@@ -80,7 +83,7 @@ export function useMusicPlayer(classId: string, session: SessionInfo | null) {
       audio.removeEventListener('ended', onEnded);
       audioRef.current = null;
     };
-  }, []); // Truly empty dependency array to maintain one Audio object
+  }, [audioUrl]);
 
   // Sync prop status to actual audio playback
   // biome-ignore lint/correctness/useExhaustiveDependencies: session is not a dependency
