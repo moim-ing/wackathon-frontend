@@ -1,6 +1,7 @@
 import GuestLayout from '@/layouts/GuestLayout';
 import HostLayout from '@/layouts/HostLayout';
 import Class from '@/routes/Class';
+import GuestSuccess from '@/routes/GuestSuccess';
 import Home from '@/routes/Home';
 import HostHome from '@/routes/HostHome';
 import SignUp from '@/routes/SignUp';
@@ -11,7 +12,10 @@ export const router = createBrowserRouter([
   {
     path: '/',
     Component: GuestLayout,
-    children: [{ index: true, Component: Home }],
+    children: [
+      { index: true, Component: Home },
+      { path: 'success', Component: GuestSuccess },
+    ],
   },
   {
     path: '/host',
