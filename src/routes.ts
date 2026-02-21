@@ -1,8 +1,8 @@
 import GuestLayout from '@/layouts/GuestLayout';
 import HostLayout from '@/layouts/HostLayout';
 import Class from '@/routes/Class';
-import Dashboard from '@/routes/Dashboard';
 import Home from '@/routes/Home';
+import HostHome from '@/routes/HostHome';
 
 import { createBrowserRouter } from 'react-router';
 
@@ -16,7 +16,7 @@ export const router = createBrowserRouter([
     path: '/host',
     Component: HostLayout,
     children: [
-      { index: true, Component: Dashboard },
+      { index: true, Component: HostHome },
       { path: 'class', Component: Class },
     ],
   },
