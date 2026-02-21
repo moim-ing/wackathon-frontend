@@ -92,11 +92,22 @@ export const sessionsHandlers = [
     { id: string; sessionId: string },
     PatchSessionStatusRequest,
     PatchSessionStatusResponse | ApiErrorResponse
-  >(path('/classes/:id/sessions/:sessionId/status'), async ({ request }) => {
-    const { status } = await request.json();
+  >(
+    path('/classes/:id/sessions/:sessionId/status'),
+    async ({ request, params }) => {
+      const { id, sessionId } = params;
+      const { status } = await request.json();
 
-    return HttpResponse.json({
-      currentStatus: status,
-    });
-  }),
+      // Mock DB 업데이트 (실제 환경에서는 DB가 알아서 하겠지만, MSW에서는 명시적으로 수정 필요)
+      const { classesDB } = await import('../db/classes.db');
+      const classData = classesDB.find((c) => c.class.id === id);
+      if (classData && classData.currentSession?.sessionId === sessionId) {
+        classData.currentSession.status = status;
+      }
+
+      return HttpResponse.json({
+        currentStatus: status,
+      });
+    }
+  ),
 ];
