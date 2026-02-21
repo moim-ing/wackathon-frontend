@@ -4,11 +4,15 @@ import { useVerifyParticipation } from '@/hooks/useParticipation';
 import type { VerifyParticipationResponse } from '@/types/participation';
 import { AlertCircle, Loader2, Mic } from 'lucide-react';
 import { useRef, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
 
 export default function Home() {
-  const verifyMutation = useVerifyParticipation();
+  const [searchParams] = useSearchParams();
+  const sessionId = searchParams.get('sessionId') ?? '';
+
+  const verifyMutation = useVerifyParticipation(sessionId);
   const uploadFileMutation = useUploadFile();
+
   const [isRecording, setIsRecording] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -93,7 +97,7 @@ export default function Home() {
       }, 5000);
     } catch (err) {
       console.error('Failed to get user media', err);
-      setErrorMsg('마이크 권한을 허용해주세요.');
+      setErrorMsg('마이크 권한을 허용해 주세요.');
     }
   };
 
@@ -132,7 +136,7 @@ export default function Home() {
             <Loader2 className="w-12 h-12 text-white animate-spin" />
           ) : (
             <Mic
-              className={`w-12 h-12 text-white ${isRecording ? 'animate-pulse' : ''}`}
+              className={`size-16 text-white ${isRecording ? 'animate-pulse' : ''}`}
             />
           )}
         </Button>
@@ -141,13 +145,13 @@ export default function Home() {
       <div className="h-16 flex flex-col justify-center items-center w-full max-w-sm">
         {isRecording && (
           <p className="text-lg font-medium text-red-500 animate-pulse">
-            녹음 중입니다... ({timeLeft}초)
+            녹음 중입니다… ({timeLeft}초)
           </p>
         )}
 
         {isVerifying && (
           <p className="text-lg font-medium text-primary">
-            출석 인증 중입니다...
+            출석 인증 중입니다…
           </p>
         )}
 
