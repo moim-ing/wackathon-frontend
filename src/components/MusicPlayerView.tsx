@@ -4,7 +4,7 @@ import { usePatchSessionStatus } from '@/hooks/useSessions';
 import { useYouTubeVideo } from '@/hooks/useYouTube';
 import { motion } from 'framer-motion';
 import { ChevronDown, Pause, Play, Square, Users } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import type { SessionInfo } from '@/types/classes';
 
@@ -21,7 +21,75 @@ export default function MusicPlayerView({
 }: MusicPlayerViewProps) {
   const { data: videoInfo } = useYouTubeVideo(session.videoId);
   const { mutate: patchStatus } = usePatchSessionStatus();
-  const [progress, setProgress] = useState(30); // Mock progress
+
+  // Audio state
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [isReady, setIsReady] = useState(false);
+
+  // 최신 상태를 이벤트 핸들러에서 참조하기 위한 Ref
+  const statusRef = useRef(session.status);
+
+  useEffect(() => {
+    statusRef.current = session.status;
+  }, [session.status]);
+
+  // URL of the MP3 file
+  const sampleURL =
+    'https://github.com/young-52/audio-test/raw/refs/heads/main/no-pain.mp3';
+
+  // Initialize Audio
+  useEffect(() => {
+    const audio = new Audio(sampleURL);
+    audioRef.current = audio;
+
+    const onLoadedMetadata = () => {
+      setDuration(audio.duration);
+      setIsReady(true);
+    };
+
+    const onTimeUpdate = () => {
+      setCurrentTime(audio.currentTime);
+    };
+
+    const onEnded = () => {
+      // 음원 재생 완료 시 다시 처음부터 재생하고 상태 전송
+      audio.currentTime = 0;
+      audio.play().catch((err) => console.error('Audio replay failed:', err));
+      // Ref를 사용하여 최신 상태를 참조
+      handleUpdateStatus(statusRef.current === 'ACTIVE' ? 'ACTIVE' : 'PAUSED');
+    };
+
+    audio.addEventListener('loadedmetadata', onLoadedMetadata);
+    audio.addEventListener('timeupdate', onTimeUpdate);
+    audio.addEventListener('ended', onEnded);
+
+    return () => {
+      audio.pause();
+      audio.removeEventListener('loadedmetadata', onLoadedMetadata);
+      audio.removeEventListener('timeupdate', onTimeUpdate);
+      audio.removeEventListener('ended', onEnded);
+      audioRef.current = null;
+    };
+  }, []);
+
+  // Sync prop status to actual audio playback
+  useEffect(() => {
+    if (!audioRef.current || !isReady) return;
+
+    if (session.status === 'ACTIVE') {
+      audioRef.current
+        .play()
+        .then(() => {
+          // 음원 로드가 완료된 후 재생이 시작될 때 상태 전송
+          handleUpdateStatus('ACTIVE');
+        })
+        .catch((err) => console.error('Audio play failed:', err));
+    } else {
+      audioRef.current.pause();
+    }
+  }, [session.status, isReady]);
 
   // Handle status update
   const handleUpdateStatus = (status: 'ACTIVE' | 'PAUSED' | 'CLOSED') => {
@@ -30,10 +98,33 @@ export default function MusicPlayerView({
       sessionId: session.sessionId,
       data: {
         status,
-        currentTime: 0,
+        currentTime: audioRef.current?.currentTime || 0,
         updatedAt: Date.now(),
       },
     });
+  };
+
+  // Handle Slider Change (Dragging)
+  const handleSliderChange = (value: number[]) => {
+    if (audioRef.current) {
+      setCurrentTime(value[0]);
+    }
+  };
+
+  // Handle Slider Commit (Released)
+  const handleSliderCommit = (value: number[]) => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = value[0];
+      handleUpdateStatus(session.status === 'ACTIVE' ? 'ACTIVE' : 'PAUSED');
+    }
+  };
+
+  // Time Formatter (seconds -> mm:ss)
+  const formatTime = (time: number) => {
+    if (isNaN(time)) return '0:00';
+    const mins = Math.floor(time / 60);
+    const secs = Math.floor(time % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
   return (
@@ -109,15 +200,16 @@ export default function MusicPlayerView({
       {/* Slider */}
       <div className="relative z-10 w-full mb-10 space-y-3">
         <Slider
-          value={[progress]}
-          onValueChange={(val) => setProgress(val[0])}
-          max={100}
-          step={1}
+          value={[currentTime]}
+          onValueChange={handleSliderChange}
+          onValueCommit={handleSliderCommit}
+          max={duration || 100}
+          step={0.1}
           className="py-2 cursor-pointer"
         />
         <div className="flex justify-between text-[11px] font-black text-muted-foreground/50 tracking-widest uppercase">
-          <span>01:24</span>
-          <span>-02:45</span>
+          <span>{formatTime(currentTime)}</span>
+          <span>-{formatTime(duration - currentTime)}</span>
         </div>
       </div>
 
