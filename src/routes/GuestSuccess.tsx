@@ -10,7 +10,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { useSessionAttendance } from '@/hooks/useSessions';
 import type { VerifyParticipationResponse } from '@/types/participation';
-import { getYouTubeThumbnailUrl, getYouTubeTitle } from '@/utils/youtube';
+import { getYouTubeInfo, getYouTubeThumbnailUrl } from '@/utils/youtube';
 import { CheckCircle2, Loader2, Music } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
@@ -34,6 +34,7 @@ export default function GuestSuccess() {
 
   const [studentName, setStudentName] = useState('');
   const [songTitle, setSongTitle] = useState<string>('');
+  const [songAuthor, setSongAuthor] = useState<string>('');
   const [isFetchingInfo, setIsFetchingInfo] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
@@ -47,11 +48,13 @@ export default function GuestSuccess() {
     const fetchInfo = async () => {
       setIsFetchingInfo(true);
       try {
-        const title = await getYouTubeTitle(verificationData.videoId);
-        setSongTitle(title);
+        const info = await getYouTubeInfo(verificationData.videoId);
+        setSongTitle(info.title);
+        setSongAuthor(info.authorName);
       } catch (error) {
-        console.error('Failed to get song title', error);
+        console.error('Failed to get song info', error);
         setSongTitle('재생 중인 곡 (정보 없음)');
+        setSongAuthor('알 수 없는 업로더');
       } finally {
         setIsFetchingInfo(false);
       }
@@ -156,11 +159,19 @@ export default function GuestSuccess() {
               </div>
               <div className="flex-1 min-w-0">
                 {isFetchingInfo ? (
-                  <div className="h-5 w-3/4 bg-primary/10 rounded animate-pulse" />
+                  <div className="space-y-2">
+                    <div className="h-5 w-3/4 bg-primary/10 rounded animate-pulse" />
+                    <div className="h-4 w-1/2 bg-primary/10 rounded animate-pulse" />
+                  </div>
                 ) : (
-                  <p className="text-sm font-medium line-clamp-2 text-foreground break-all">
-                    {songTitle}
-                  </p>
+                  <div className="flex flex-col">
+                    <p className="text-sm font-medium line-clamp-2 text-foreground break-all">
+                      {songTitle}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
+                      {songAuthor}
+                    </p>
+                  </div>
                 )}
               </div>
             </div>

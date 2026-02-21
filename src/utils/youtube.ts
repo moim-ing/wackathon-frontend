@@ -1,4 +1,11 @@
-export async function getYouTubeTitle(videoId: string): Promise<string> {
+export interface YouTubeVideoInfo {
+  title: string;
+  authorName: string;
+}
+
+export async function getYouTubeInfo(
+  videoId: string
+): Promise<YouTubeVideoInfo> {
   try {
     const response = await fetch(
       `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`
@@ -7,10 +14,16 @@ export async function getYouTubeTitle(videoId: string): Promise<string> {
       throw new Error('Failed to fetch YouTube info');
     }
     const data = await response.json();
-    return data.title;
+    return {
+      title: data.title,
+      authorName: data.author_name,
+    };
   } catch (error) {
-    console.error('Error fetching YouTube title:', error);
-    return '알 수 없는 곡';
+    console.error('Error fetching YouTube info:', error);
+    return {
+      title: '알 수 없는 곡',
+      authorName: '알 수 없는 업로더',
+    };
   }
 }
 
