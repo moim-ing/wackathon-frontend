@@ -28,13 +28,10 @@ export default function useAuth() {
   // 2. 이메일 회원가입 로직
   const handleSignUp = async (data: SignUpRequest) => {
     try {
-      const response = await signupApi(data);
-
-      if (response.data.token) {
-        // 성공 시 바로 로그인 할지 여부는 선택사항. 지금은 true 리턴.
-        return true;
-      }
-      return false;
+      const { token } = await signupApi(data);
+      const user = await getMeApi(token);
+      login(user, token); // Zustand 스토어 업데이트
+      navigate('/host'); // 메인 페이지로 이동
     } catch (error) {
       console.error('Signup failed:', error);
     }
