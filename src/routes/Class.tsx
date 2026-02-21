@@ -1,4 +1,5 @@
 import MusicCard from '@/components/MusicCard';
+import MusicPlayerView from '@/components/MusicPlayerView';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -40,6 +41,7 @@ export default function Class() {
   const { data: classData, isLoading, updateStatus } = useClass(classId || '');
   const { mutateAsync: createSession } = useCreateSession();
   const [showCloseDialog, setShowCloseDialog] = useState(false);
+  const [isPlayerOpen, setIsPlayerOpen] = useState(false);
 
   const title = classData?.class.title || '';
   const sessions = classData?.sessions || [];
@@ -105,13 +107,10 @@ export default function Class() {
           >
             <div
               className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer hover:opacity-80 transition-opacity"
-              onClick={() =>
-                navigate(`/class/${classId}/${currentSession.sessionId}`, {
-                  viewTransition: true,
-                })
-              }
+              onClick={() => setIsPlayerOpen(true)}
             >
-              <img
+              <motion.img
+                layoutId="album-art"
                 src={`https://img.youtube.com/vi/${currentSession.videoId}/maxresdefault.jpg`}
                 alt="Current Album Art"
                 className="size-12 rounded-xl object-cover shadow-md"
@@ -175,8 +174,9 @@ export default function Class() {
                 </Button>
               </motion.div>
             </motion.div>
-          </motion.div> /* Start Session Dialog */
+          </motion.div>
         ) : (
+          /* Start Session Dialogue */
           <motion.div
             key="start-fab"
             initial={{ scale: 0.8, opacity: 0 }}
@@ -270,6 +270,16 @@ export default function Class() {
               </DialogContent>
             </Dialog>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {isPlayerOpen && currentSession && (
+          <MusicPlayerView
+            classId={classId || ''}
+            session={currentSession}
+            onClose={() => setIsPlayerOpen(false)}
+          />
         )}
       </AnimatePresence>
 
