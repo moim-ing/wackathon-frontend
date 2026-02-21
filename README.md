@@ -1,6 +1,6 @@
 <div align="center">
   <div align="center">
-    <img src="public/muCheckPicon.svg" width="150" />
+    <img src="public/mucheckPicon.svg" width="150" />
     <h1>MuCheck</h1>
   </div>
   <p align="center">
