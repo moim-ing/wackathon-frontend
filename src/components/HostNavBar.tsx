@@ -3,11 +3,7 @@ import useAuth from '@/hooks/useAuth';
 import { Link } from 'react-router';
 
 export default function NavBar() {
-  const { isLoggedIn } = useAuth();
-
-  const handleLogout = () => {
-    console.info('Logout button clicked.');
-  };
+  const { isLoggedIn, handleLogout } = useAuth();
 
   return (
     <header className="fixed top-2 inset-x-0 z-50 flex justify-center px-2">
