@@ -8,7 +8,10 @@ export default function NavBar() {
         <Link to="/host" className="flex items-center space-x-2">
           <img src="/moiming-symbol.svg" alt="logo" />
         </Link>
-        <Button variant="link" className="text-black font-semibold">
+        <Button
+          variant="link"
+          className="text-black font-semibold cursor-pointer"
+        >
           로그아웃
         </Button>
       </nav>

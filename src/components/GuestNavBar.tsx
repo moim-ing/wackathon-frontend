@@ -8,11 +8,9 @@ export default function NavBar() {
         <Link to="/" className="flex items-center space-x-2">
           <img src="/moiming-symbol.svg" alt="logo" />
         </Link>
-        <Link to="/host">
-          <Button variant="link" className="text-black font-semibold">
-            호스트 페이지로
-          </Button>
-        </Link>
+        <Button variant="link" className="text-black font-semibold">
+          <Link to="/host">호스트 페이지로</Link>
+        </Button>
       </nav>
     </header>
   );
