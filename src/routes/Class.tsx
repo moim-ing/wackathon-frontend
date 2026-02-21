@@ -197,6 +197,7 @@ export default function Class() {
               </DialogTrigger>
               <DialogContent className="sm:max-w-sm">
                 <form
+                  className="flex flex-col gap-4"
                   onSubmit={async (e) => {
                     e.preventDefault();
                     const formData = new FormData(e.currentTarget);

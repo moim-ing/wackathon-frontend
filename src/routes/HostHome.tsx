@@ -73,7 +73,7 @@ export default function HostHome() {
                 </div>
               </div>
             </CardContent>
-            <CardFooter className="flex-col gap-2">
+            <CardFooter className="flex-col gap-2 mt-6">
               <Button type="submit" className="w-full">
                 로그인
               </Button>
@@ -126,6 +126,7 @@ export default function HostHome() {
         </DialogTrigger>
         <DialogContent className="sm:max-w-sm">
           <form
+            className="flex flex-col gap-4"
             onSubmit={async (e) => {
               e.preventDefault();
               const formData = new FormData(e.currentTarget);
