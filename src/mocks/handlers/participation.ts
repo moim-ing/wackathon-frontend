@@ -10,35 +10,25 @@ export const participationHandlers = [
     never,
     FormData, // Change request type to FormData for MSW
     VerifyParticipationResponse | ApiErrorResponse
-  >(path('/participation/verify'), async ({ request }) => {
-    const formData = await request.formData();
-    const audioFile = formData.get('audioFile');
+  >(path('/participation/verify'), async () => {
+    // const formData = await request.formData();
+    // const audioFile = formData.get('audioFile');
 
-    // 실제 서비스라면 audioFile을 가지고 음원을 판별하는 로직이 서버에 존재
-    if (audioFile) {
-      await delay(800);
+    // 실제 서비스라면 audioFile을 가지고 음원을 판별하는 로직이 서버에 존재하겠지만
+    // 현재는 성공 페이지를 자유롭게 볼 수 있도록 항상 성공을 반환합니다.
+    await delay(100);
 
-      const mockResponse: VerifyParticipationResponse = {
-        id: '1',
-        title: '알고리즘',
-        sessionId: '1',
-        sessionTitle: '1주차',
-        videoId: 'hHHQ4bNhwjU',
-        verifiedAt: new Date().toISOString(),
-      };
+    const mockResponse: VerifyParticipationResponse = {
+      id: '1',
+      title: '알고리즘',
+      sessionId: '1',
+      sessionTitle: '1주차',
+      videoId: 'hHHQ4bNhwjU',
+      verifiedAt: new Date().toISOString(),
+    };
 
-      participationDB.push(mockResponse);
+    participationDB.push(mockResponse);
 
-      return HttpResponse.json(mockResponse);
-    }
-
-    return HttpResponse.json(
-      {
-        httpStatusCode: 'BAD_REQUEST',
-        title: '오디오 오류',
-        message: 'Wrong guest audio',
-      } as ApiErrorResponse,
-      { status: 400 }
-    );
+    return HttpResponse.json(mockResponse);
   }),
 ];
