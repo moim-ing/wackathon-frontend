@@ -10,6 +10,7 @@ export interface CreateSessionRequest {
 
 export interface CreateSessionResponse {
   sessionId: string;
+  audioUrl?: string;
 }
 
 // ---------- GET /api/classes/{id}/sessions/{sessionId} ----------

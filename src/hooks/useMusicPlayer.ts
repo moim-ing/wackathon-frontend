@@ -46,25 +46,32 @@ export function useMusicPlayer(classId: string, session: SessionInfo | null) {
   }, [handleUpdateStatus]);
 
   const { data: fileData } = useGetFile(session?.sessionId || '');
-  const audioUrl = fileData?.url;
+  const audioUrl = session?.audioUrl || fileData?.url;
 
   // Initialize Audio
+  // biome-ignore lint/correctness/useExhaustiveDependencies: session is not a dependency
   useEffect(() => {
     if (!audioUrl) {
       setIsReady(false);
+      setCurrentTime(0);
       return;
     }
 
-    // 새로운 오디오 URL이 들어오면 준비 상태 초기화
+    // 새로운 오디오 URL이 들어오면 모든 상태 초기화
     setIsReady(false);
+    setCurrentTime(0);
     const audio = new Audio(audioUrl);
-    audio.crossOrigin = 'anonymous'; // Added for cross-origin audio playback
+    audio.crossOrigin = 'anonymous';
     audioRef.current = audio;
 
     const onLoadedMetadata = () => {
       setDuration(audio.duration);
       setIsReady(true);
     };
+
+    if (audio.readyState >= 1) {
+      onLoadedMetadata();
+    }
 
     const onTimeUpdate = () => {
       setCurrentTime(audio.currentTime);
@@ -89,14 +96,12 @@ export function useMusicPlayer(classId: string, session: SessionInfo | null) {
       audio.removeEventListener('ended', onEnded);
       audioRef.current = null;
     };
-  }, [audioUrl]);
+  }, [audioUrl, session?.sessionId]); // session?.sessionId 추가
 
   // Sync prop status to actual audio playback
   // biome-ignore lint/correctness/useExhaustiveDependencies: session is not a dependency
   useEffect(() => {
-    if (!audioRef.current || !session) return;
-
-    // let isCancelled = false;
+    if (!audioRef.current || !isReady || !session) return;
 
     if (session.status === 'ACTIVE') {
       audioRef.current
@@ -108,11 +113,7 @@ export function useMusicPlayer(classId: string, session: SessionInfo | null) {
     } else {
       audioRef.current.pause();
     }
-
-    return () => {
-      // isCancelled = true;
-    };
-  }, [session?.status, isReady]);
+  }, [session?.sessionId, session?.status, isReady]);
 
   const seek = (time: number) => {
     if (audioRef.current) {

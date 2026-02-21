@@ -50,7 +50,8 @@ export const sessionsHandlers = [
 
     return HttpResponse.json({
       sessionId: newSessionId,
-      // CreateSessionResponse types only has sessionId
+      audioUrl:
+        'https://github.com/young-52/audio-test/raw/refs/heads/main/no-pain.mp3',
     } as CreateSessionResponse);
   }),
 

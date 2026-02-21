@@ -38,7 +38,24 @@ export function useCreateSession() {
       classId: string;
       data: CreateSessionRequest;
     }) => createSession(classId, data),
-    onSuccess: (_, variables) => {
+    onSuccess: (data, variables) => {
+      // 갱신 전 즉시 UI 반영을 위해 캐시 수동 업데이트
+      queryClient.setQueryData<GetClassResponse>(
+        classesKeys.detail(variables.classId),
+        (old) => {
+          if (!old) return old;
+          return {
+            ...old,
+            currentSession: {
+              sessionId: data.sessionId,
+              sessionTitle: variables.data.sessionTitle,
+              videoId: variables.data.videoId,
+              audioUrl: data.audioUrl,
+              status: 'ACTIVE',
+            },
+          };
+        }
+      );
       queryClient.invalidateQueries({
         queryKey: classesKeys.detail(variables.classId),
       });

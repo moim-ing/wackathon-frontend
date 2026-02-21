@@ -43,6 +43,7 @@ export default function Class() {
   const { mutateAsync: createSession } = useCreateSession();
   const { mutateAsync: uploadFile } = useUploadFile();
   const [showCloseDialog, setShowCloseDialog] = useState(false);
+  const [showCloseLoading, setShowCloseLoading] = useState(false);
   const [isPlayerOpen, setIsPlayerOpen] = useState(false);
   const [isStartSessionOpen, setIsStartSessionOpen] = useState(false);
 
@@ -132,6 +133,23 @@ export default function Class() {
                 <PlayerInfo videoId={currentSession.videoId} />
               </div>
             </div>
+
+            <AlertDialog
+              open={showCloseLoading}
+              onOpenChange={setShowCloseLoading}
+            >
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>음원 업로드 중입니다</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    음원이 아직 업로드되지 않았거나, 서버에 올리고 있으니 잠시
+                    기다려 주세요.
+                    <br />
+                    최장 1분 정도 소요될 수 있습니다.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+              </AlertDialogContent>
+            </AlertDialog>
 
             <motion.div layout className="flex items-center gap-2 shrink-0">
               <AnimatePresence mode="popLayout">
@@ -233,21 +251,30 @@ export default function Class() {
                     const audioFile = formData.get('audio-file') as File;
 
                     if (classId && sessionTitle && videoId && audioFile) {
-                      const uploadResponse = await uploadFile({
-                        file: audioFile,
-                        prefix: 'audio',
-                      });
+                      setShowCloseLoading(true);
+                      try {
+                        const uploadResponse = await uploadFile({
+                          file: audioFile,
+                          prefix: 'audio',
+                        });
 
-                      await createSession({
-                        classId,
-                        data: {
-                          sessionTitle,
-                          videoId,
-                          videoKey: uploadResponse.key,
-                        },
-                      });
+                        await createSession({
+                          classId,
+                          data: {
+                            sessionTitle,
+                            videoId,
+                            videoKey: uploadResponse.key,
+                          },
+                        });
 
-                      setIsStartSessionOpen(false);
+                        setIsStartSessionOpen(false);
+                      } catch (error) {
+                        console.error('Session creation failed:', error);
+                        // 에러 처리는 react-query의 onError에서 할 수도 있으나
+                        // 여기서는 로딩을 닫는 것이 중요
+                      } finally {
+                        setShowCloseLoading(false);
+                      }
                     }
                   }}
                 >

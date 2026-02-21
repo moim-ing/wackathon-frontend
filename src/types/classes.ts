@@ -16,6 +16,7 @@ export interface SessionInfo {
   sessionId: string;
   sessionTitle: string;
   videoId: string;
+  audioUrl?: string; // 클라이언트에서 즉시 재생을 위해 사용할 수 있음
   createdAt?: string; // GET 응답에만 있을 수 있음
   status?: 'ACTIVE' | 'PAUSED' | 'CLOSED'; // currentSessions 와일 때
   totalParticipants?: number;
