@@ -1,8 +1,20 @@
 import ClassCard from '@/components/ClassCard';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Field, FieldGroup } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Plus } from 'lucide-react';
 import { useNavigate } from 'react-router';
 
 const sampleClasses = [
@@ -93,6 +105,48 @@ export default function HostHome() {
           />
         ))}
       </div>
+      <Dialog>
+        <form>
+          <DialogTrigger asChild>
+            <Button
+              size="icon"
+              className="fixed bottom-10 left-1/2 -translate-x-1/2 h-12 w-40 rounded-full shadow-xl cursor-pointer"
+            >
+              <Plus className="size-5" />
+              <span className="text-base font-semibold">수업 추가하기</span>
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-sm">
+            <DialogHeader>
+              <DialogTitle>수업 추가하기</DialogTitle>
+              <DialogDescription>
+                새로운 수업의 제목을 입력해 주세요.
+              </DialogDescription>
+            </DialogHeader>
+            <FieldGroup>
+              <Field>
+                <Input
+                  id="class-title"
+                  name="class-title"
+                  placeholder="수업 제목"
+                />
+              </Field>
+            </FieldGroup>
+            <DialogFooter>
+              <div className="flex gap-3 items-center justify-center">
+                <DialogClose asChild>
+                  <Button variant="outline" className="w-[48%]">
+                    취소
+                  </Button>
+                </DialogClose>
+                <Button type="submit" className="w-[48%]">
+                  추가
+                </Button>
+              </div>
+            </DialogFooter>
+          </DialogContent>
+        </form>
+      </Dialog>
     </div>
   );
 }
