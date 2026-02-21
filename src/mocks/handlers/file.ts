@@ -30,7 +30,7 @@ export const fileHandlers = [
 
       const mockResponse: GetFileResponse = {
         key: 'mock-audio-file-key-for-session-' + sessionId,
-        url: 'https://example.com/mock-audio-file.mp3',
+        url: 'https://github.com/young-52/audio-test/raw/refs/heads/main/no-pain.mp3',
       };
 
       return HttpResponse.json(mockResponse);
