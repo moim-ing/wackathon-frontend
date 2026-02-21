@@ -1,0 +1,41 @@
+export default function MusicCard({
+  key,
+  title,
+  videoId,
+  date,
+  participants,
+  onClick,
+}: {
+  key: string;
+  title: string;
+  videoId: string;
+  date: string;
+  participants: number;
+  onClick: () => void;
+}) {
+  return (
+    <div
+      key={key}
+      className="flex gap-2 px-2 py-2 items-center cursor-pointer hover:bg-gray-100 rounded-md transition-all"
+      onClick={onClick}
+    >
+      <img
+        src={`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
+        alt="Album cover"
+        className="w-10 h-10 rounded-sm object-cover"
+      />
+      <div className="flex w-full justify-between items-center pl-1.5 pr-2">
+        <span className="text-lg font-semibold">{title}</span>
+        <div className="flex flex-col items-end">
+          <span className="text-sm">
+            <strong className="text-md font-semibold">{participants}</strong>명
+            출석
+          </span>
+          <span className="text-xs">
+            {new Date(date).toLocaleDateString('ko-kr')}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
