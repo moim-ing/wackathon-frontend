@@ -1,8 +1,9 @@
 import { Button } from '@/components/ui/button';
+import useAuth from '@/hooks/useAuth';
 import { Link } from 'react-router';
 
 export default function NavBar() {
-  const isLogin = false;
+  const { isLoggedIn } = useAuth();
 
   const handleLogout = () => {
     console.info('Logout button clicked.');
@@ -14,7 +15,7 @@ export default function NavBar() {
         <Link to="/host" className="flex items-center space-x-2">
           <img src="/mucheckPicon.svg" width={40} alt="logo" />
         </Link>
-        {isLogin ? (
+        {isLoggedIn ? (
           <Button
             variant="link"
             className="text-black font-semibold cursor-pointer"
