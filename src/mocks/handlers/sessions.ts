@@ -103,6 +103,10 @@ export const sessionsHandlers = [
       const classData = classesDB.find((c) => c.class.id === id);
       if (classData && classData.currentSession?.sessionId === sessionId) {
         classData.currentSession.status = status;
+        if (status === 'CLOSED') {
+          classData.sessions.push({ ...classData.currentSession });
+          classData.currentSession = undefined;
+        }
       }
 
       return HttpResponse.json({
