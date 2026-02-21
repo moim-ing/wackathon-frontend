@@ -276,10 +276,10 @@ export default function Class() {
       <AlertDialog open={showCloseDialog} onOpenChange={setShowCloseDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>세션을 종료하시겠습니까?</AlertDialogTitle>
+            <AlertDialogTitle>세션 종료</AlertDialogTitle>
             <AlertDialogDescription>
-              세션을 종료하면 더 이상 실시간 출석 확인 및 음악 공유를 할 수 없게
-              됩니다. 정말로 종료할까요?
+              세션을 종료하면 출석 체크가 끝나고 출석부가 확정돼요. 세션을
+              종료할까요?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
