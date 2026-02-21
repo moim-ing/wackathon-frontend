@@ -23,8 +23,5 @@ export interface LoginResponse {
 
 // ---------- /logout ----------
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface LogoutRequest {}
-
 // 204 No Content
 export type LogoutResponse = void;
