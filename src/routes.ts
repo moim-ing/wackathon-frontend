@@ -4,6 +4,7 @@ import Class from '@/routes/Class';
 import GuestSuccess from '@/routes/GuestSuccess';
 import Home from '@/routes/Home';
 import HostHome from '@/routes/HostHome';
+import Session from '@/routes/Session';
 import SignUp from '@/routes/SignUp';
 
 import { createBrowserRouter } from 'react-router';
@@ -28,6 +29,9 @@ export const router = createBrowserRouter([
   {
     path: '/class/:classId',
     Component: HostLayout,
-    children: [{ index: true, Component: Class }],
+    children: [
+      { index: true, Component: Class },
+      { path: ':sessionId', Component: Session },
+    ],
   },
 ]);

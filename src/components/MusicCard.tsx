@@ -1,12 +1,12 @@
 export default function MusicCard({
-  key,
+  sessionId,
   title,
   videoId,
   date,
   participants,
   onClick,
 }: {
-  key: string;
+  sessionId: string;
   title: string;
   videoId: string;
   date: string;
@@ -15,7 +15,6 @@ export default function MusicCard({
 }) {
   return (
     <div
-      key={key}
       className="flex gap-2 px-2 py-2 items-center cursor-pointer hover:bg-gray-100 rounded-md transition-all"
       onClick={onClick}
     >
@@ -23,6 +22,7 @@ export default function MusicCard({
         src={`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
         alt="Album cover"
         className="w-10 h-10 rounded-sm object-cover"
+        style={{ viewTransitionName: `album-art-${sessionId}` }}
       />
       <div className="flex w-full justify-between items-center pl-1.5 pr-2">
         <span className="text-lg font-semibold">{title}</span>

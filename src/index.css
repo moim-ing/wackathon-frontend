@@ -253,4 +253,8 @@
     transition: background-color 5000s ease-in-out 0s;
     caret-color: #262626;
   }
+
+  .album-art {
+    view-transition-name: album-art;
+  }
 }

@@ -56,11 +56,16 @@ export default function Class() {
           <>
             <MusicCard
               key={session.sessionId}
+              sessionId={session.sessionId}
               title={session.sessionTitle}
               videoId={session.videoId}
               date={session.createdAt}
               participants={session.totalParticipants}
-              onClick={() => navigate(`/class/${classId}/${session.sessionId}`)}
+              onClick={() =>
+                navigate(`/class/${classId}/${session.sessionId}`, {
+                  viewTransition: true,
+                })
+              }
             />
             {sampleHistory.indexOf(session) < sampleHistory.length - 1 && (
               <Separator />
