@@ -14,6 +14,7 @@ import { Field, FieldGroup } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { formatDate } from '@/utils/date';
 import { Play } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router';
 
@@ -100,7 +101,7 @@ export default function Class() {
                 <Input
                   id="session-title"
                   name="session-title"
-                  defaultValue={new Date().toLocaleDateString('ko-kr')}
+                  defaultValue={formatDate()}
                 />
               </Field>
               <Field>

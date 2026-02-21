@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { formatDate } from '@/utils/date';
 import { ArrowLeft, Calendar, Music, Users } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router';
 
@@ -94,11 +95,7 @@ export default function Session() {
           <div className="flex items-center gap-2">
             <Calendar className="size-4 text-primary" />
             <span className="text-sm font-semibold">
-              {new Date(session.date).toLocaleDateString('ko-KR', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}
+              {formatDate(session.date)}
             </span>
           </div>
           <div className="w-px h-3 bg-border" />

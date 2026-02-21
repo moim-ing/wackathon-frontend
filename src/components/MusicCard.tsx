@@ -1,3 +1,5 @@
+import { formatDate } from '@/utils/date';
+
 export default function MusicCard({
   sessionId,
   title,
@@ -31,9 +33,7 @@ export default function MusicCard({
             <strong className="text-md font-semibold">{participants}</strong>명
             출석
           </span>
-          <span className="text-xs">
-            {new Date(date).toLocaleDateString('ko-kr')}
-          </span>
+          <span className="text-xs">{formatDate(date)}</span>
         </div>
       </div>
     </div>
