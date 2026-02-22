@@ -25,8 +25,24 @@ export default function Home() {
   const handleStartRecording = async () => {
     setErrorMsg(null);
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: false,
+          noiseSuppression: false,
+          autoGainControl: false,
+          sampleRate: 44100,
+          channelCount: 1,
+        },
+      });
+      const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+        ? 'audio/webm;codecs=opus'
+        : MediaRecorder.isTypeSupported('audio/mp4')
+          ? 'audio/mp4'
+          : '';
+      const mediaRecorder = new MediaRecorder(stream, {
+        ...(mimeType && { mimeType }),
+        audioBitsPerSecond: 128000,
+      });
       mediaRecorderRef.current = mediaRecorder;
       audioChunksRef.current = [];
 
@@ -39,7 +55,7 @@ export default function Home() {
       mediaRecorder.onstop = async () => {
         if (timerRef.current) clearInterval(timerRef.current);
         const audioBlob = new Blob(audioChunksRef.current, {
-          type: 'audio/webm',
+          type: mediaRecorderRef.current?.mimeType || 'audio/webm',
         });
         const recordedAt = new Date().getTime();
 
