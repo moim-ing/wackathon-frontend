@@ -32,6 +32,7 @@ import { useYouTubeVideo } from '@/hooks/useYouTube';
 import { formatDate } from '@/utils/date';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Loader2, Pause, Play, Square } from 'lucide-react';
+import { QRCodeSVG } from 'qrcode.react';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
@@ -84,6 +85,18 @@ export default function Class() {
   return (
     <div className="flex w-full flex-col gap-8 ">
       <h1 className="text-3xl font-bold">{title}</h1>
+      <h2>진행 중인 세션</h2>
+      {currentSession ? (
+        <QRCodeSVG
+          value={`${import.meta.env.VITE_BASE_URL}?sessionId=${currentSession.sessionId}`}
+        />
+      ) : (
+        <p>진행 중인 세션이 없습니다.</p>
+      )}
+
+      <Separator />
+
+      <h2>플레이리스트</h2>
       <div className="flex flex-col w-full gap-1">
         {sessions.map((session, index) => (
           <div key={session.sessionId}>
