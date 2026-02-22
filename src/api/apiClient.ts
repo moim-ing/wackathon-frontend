@@ -8,7 +8,7 @@ const baseURL = import.meta.env.VITE_API_BASE_URL || '';
 // 공통 설정을 가진 axios 인스턴스 생성
 const apiClient = axios.create({
   baseURL: `${baseURL}/api`,
-  timeout: 5000,
+  timeout: 60000,
   headers: { 'Content-Type': 'application/json' },
 });
 
