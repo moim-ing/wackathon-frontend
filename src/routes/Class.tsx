@@ -88,7 +88,7 @@ export default function Class() {
       <h2>진행 중인 세션</h2>
       {currentSession ? (
         <QRCodeSVG
-          value={`${import.meta.env.VITE_BASE_URL}?sessionId=${currentSession.sessionId}`}
+          value={`${window.location.origin}?sessionId=${currentSession.sessionId}`}
         />
       ) : (
         <p>진행 중인 세션이 없습니다.</p>
