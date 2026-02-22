@@ -57,7 +57,6 @@ export default function Home() {
         const audioBlob = new Blob(audioChunksRef.current, {
           type: mediaRecorderRef.current?.mimeType || 'audio/webm',
         });
-        const recordedAt = new Date().getTime();
 
         setIsRecording(false);
         setIsVerifying(true);
@@ -87,6 +86,7 @@ export default function Home() {
         }
       };
 
+      const recordedAt = new Date().getTime();
       mediaRecorder.start();
       setIsRecording(true);
       setTimeLeft(5);
